@@ -1,0 +1,88 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend
+    restart: always
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "3009:3000"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  customer-service:
+    build:
+      context: ./customer-services
+      dockerfile: Dockerfile
+    container_name: customer-service
+    ports:
+      - "3010:3000"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  inventory-service:
+    build: ./inventory-services
+    container_name: inventory-service
+    ports:
+      - "3008:3000"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  menu-service:
+    build: ./menu-services
+    container_name: menu-service
+    ports:
+      - "3012:3000"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  order-service:
+    build: ./order-services
+    container_name: order-service
+    ports:
+      - "3011:3000"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  payment-service:
+    build: ./payment-services
+    container_name: payment-service
+    ports:
+      - "3007:3000"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+  # backend:
+  #   build: ./
+  #   container_name: backend
+  #   ports:
+  #     - "3001:3000"
+  #   depends_on:
+  #     - mongo
+  #   networks:
+  #     - backend
+
+volumes:
+  mongo_data:
+
+
+networks:
+  backend:
